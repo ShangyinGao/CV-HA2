@@ -4,7 +4,7 @@ function [Korrespondenzen] = punkt_korrespondenzen(I1,I2,Mpt1,Mpt2,varargin)
 % zu ermitteln.
 
 % WICHTIG: windows_length (odd) darf nicht mehr als 11 sein
-window_length = 11;
+window_length = 5;
 % Zahl der punkten in dem Bildsegment
 N = window_length^2;
 min_corr = 0.99;
@@ -80,26 +80,11 @@ Korrespondenzen = Korrespondenzen(:, 2:end);
 
 %%
 % ploten
-locationP1 = [Korrespondenzen(2, :); Korrespondenzen(1, :)]';
-locationP2 = [Korrespondenzen(4, :); Korrespondenzen(3, :)]';
-% % locationP1 = [Mpt1(2, :); Mpt1(1, :)]';
-% % locationP2 = [Mpt2(2, :); Mpt2(1, :)]';
-% 
-% matchedPointsP1 = cornerPoints(locationP1);
-% matchedPointsP2 = cornerPoints(locationP2);
-% % showMatchedFeatures(IGray1,IGray2,matchedPointsP1,matchedPointsP2);
-% figure(1);
-% imshow(I1); hold on;
-% plot(matchedPointsP1);
-% figure(2);
-% imshow(I2); hold on;
-% plot(matchedPointsP2);
-
-figure(1),imshow(I1),hold on,
-plot(Korrespondenzen(2, :)', Korrespondenzen(1, :)','ys');
-figure(2),imshow(I2),hold on,
-plot(Korrespondenzen(4, :)', Korrespondenzen(3, :)','ys');
-
+imshow([I1, ones(size(I1, 1), 10), I2]); hold on;
+plot(Korrespondenzen(2, :)', Korrespondenzen(1, :)','rx'); hold on;
+plot(Korrespondenzen(4, :)'+size(I1, 2)*ones(size(Korrespondenzen, 2), 1), Korrespondenzen(3, :)','rx'); hold on;
+plot([Korrespondenzen(2, :); Korrespondenzen(4, :)+size(I1, 2)*ones(1, size(Korrespondenzen, 2))+10], ... 
+    [Korrespondenzen(1, :); Korrespondenzen(3, :)], 'y-');
 
 end
 
