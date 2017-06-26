@@ -2,18 +2,18 @@ function [Korrespondenzen] = punkt_korrespondenzen(I1,I2,Mpt1,Mpt2,varargin)
 % In dieser Funktion sollen die extrahierten Merkmalspunkte aus einer
 % Stereo-Aufnahme mittels NCC verglichen werden um Korrespondenzpunktpaare
 % zu ermitteln.
+
 tic
+
 % varargin
 P = inputParser;
 P.addOptional('do_plot', false, @islogical);
 P.addOptional('window_length', 15, @isnumeric);
 P.addOptional('min_corr', 0.99, @isnumeric);
-
 P.parse(varargin{:});
-
-do_plot = P.Results.do_plot;
-window_length = P.Results.window_length;
-min_corr = P.Results.min_corr;
+do_plot         = P.Results.do_plot;
+window_length   = P.Results.window_length;
+min_corr        = P.Results.min_corr;
 
 % ergaezen n nullspalte und nullzeile, passen numberOfZero zuc
 % windows_length. numberOfZero > windows_length-13
@@ -23,7 +23,6 @@ N = window_length^2;
 % Zahl der Merkalpunkten
 numberP1 = size(Mpt1, 2);
 numberP2 = size(Mpt2, 2);
-
 
 % init Korrespondenzen
 Korrespondenzen = zeros(4, 1);
@@ -35,9 +34,14 @@ I2Extend(numberOfZero+1 : numberOfZero+size(I2, 1), numberOfZero+1 : numberOfZer
 
 
 %%
-% Bias-Gain-Modell
+% init Bias-Gain-Modell
 windowsP1 = zeros(N, numberP1);
 windowsP2 = zeros(N, numberP2);
+windowsP1BiasNorm = zeros(N, numberP1);
+windowsP2BiasNorm = zeros(N, numberP2);
+windowsP1BiasGainNorm = zeros(N, numberP1);
+windowsP2BiasGainNorm = zeros(N, numberP2);
+
 % waehlen Bildersegmente um P1
 for i = 1:numberP1
     windowsP1(:, i) = reshape(I1Extend(numberOfZero+Mpt1(2, i)-(window_length-1)/2 : numberOfZero+Mpt1(2, i)+(window_length-1)/2, ...
@@ -79,8 +83,9 @@ if do_plot
 end
 
 %%
+% Zeit rechnen
 timeElapsed = toc
-% print zahl der gefundenen Korrespondenzen
+% print Zahl der gefundenen Korrespondenzen
 fprintf('Zahl der gefundenen Korrespondenzen ist %d\n', size(Korrespondenzen, 2));
 
 end
